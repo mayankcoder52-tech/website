@@ -1,0 +1,148 @@
+import path from 'path';
+import fs from 'fs';
+import { DatabaseState, Problem, User, Achievement, Contest, Note, AuditLog } from '../types/index';
+
+const DB_DIR = path.join(process.cwd(), 'src', 'db');
+const DB_FILE = path.join(DB_DIR, 'db.json');
+
+export const initialProblems: Problem[] = [
+  {
+    id: 'p1',
+    title: 'Two Sum Matrix',
+    difficulty: 'Easy',
+    category: 'Arrays & Hashing',
+    acceptanceRate: 84.5,
+    solved: false,
+    description: 'Given an array of integers `nums` and an integer `target`, return indices of the two numbers such that they add up to `target`.\n\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.',
+    starterCode: 'function twoSum(nums, target) {\n  // Write your code here\n  return [];\n}',
+    testCases: [
+      { input: '[2, 7, 11, 15], 9', expectedOutput: '[0, 1]' },
+      { input: '[3, 2, 4], 6', expectedOutput: '[1, 2]' }
+    ],
+    solutionExplanation: 'Use a hash map to record the index of elements we have visited. For each element `x`, verify if `target - x` is already present in our map.'
+  },
+  {
+    id: 'p2',
+    title: 'Dynamic Palindromic Grid',
+    difficulty: 'Medium',
+    category: 'Dynamic Programming',
+    acceptanceRate: 52.1,
+    solved: false,
+    description: 'Find the longest palindromic substring in a given string `s`.\n\nInput: s = "babad"\nOutput: "bab"\nNote: "aba" is also a valid answer.',
+    starterCode: 'function longestPalindrome(s) {\n  // Implement DP recurrence relations\n  return "";\n}',
+    testCases: [
+      { input: '"babad"', expectedOutput: '"bab"' },
+      { input: '"cbbd"', expectedOutput: '"bb"' }
+    ],
+    solutionExplanation: 'Establish a boolean table DP table where table[i][j] is true if substring s[i..j] is a palindrome.'
+  },
+  {
+    id: 'p3',
+    title: 'Maximal Flow Network',
+    difficulty: 'Hard',
+    category: 'Graphs & Networks',
+    acceptanceRate: 31.8,
+    solved: false,
+    description: 'Compute the maximum possible flow from a source vertex `s` to a sink vertex `t` in a directed graph with edge capacities.',
+    starterCode: 'function maxFlow(graph, source, sink) {\n  // Implement Ford-Fulkerson or Dinic\n  return 0;\n}',
+    testCases: [
+      { input: '[[0, 16, 13], [0, 0, 10], [0, 4, 0]], 0, 2', expectedOutput: '23' }
+    ],
+    solutionExplanation: 'Use Breadth-First-Search (BFS) in Edmond-Karp to repeatedly find augmenting paths in the residual graph.'
+  }
+];
+
+export const initialUser: User = {
+  id: 'u1',
+  name: 'Elite Alchemist',
+  email: 'mayank.coder52@gmail.com',
+  avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=250',
+  role: 'Admin',
+  xp: 1450,
+  level: 4,
+  streak: 7,
+  joinedAt: '2026-06-01',
+  bio: 'Staff Engineer & Competitive Programmer. Specializing in high-throughput microservices and advanced DP algorithms.',
+  githubUrl: 'https://github.com/codeforge-alchemist',
+  rank: 124,
+};
+
+export const initialAchievements: Achievement[] = [
+  { id: 'a1', title: 'Code Forge Initiate', description: 'Enter the workspace and initialize your developer profile.', icon: 'Award', unlockedAt: '2026-06-01', xpValue: 100 },
+  { id: 'a2', title: 'Consistent Alchemist', description: 'Maintain an active daily practice streak of 7 days.', icon: 'Zap', unlockedAt: '2026-06-28', xpValue: 250 },
+  { id: 'a3', title: 'DP Overlord', description: 'Complete 10 highly complex Dynamic Programming problems.', icon: 'Cpu', xpValue: 500 },
+  { id: 'a4', title: 'Grandmaster Predictor', description: 'Evaluate virtual match analytics with 98%+ prediction score.', icon: 'Trophy', xpValue: 300 },
+];
+
+export const initialContests: Contest[] = [
+  {
+    id: 'c1',
+    title: 'CodeForge Binary Cup #14',
+    duration: '2 Hours',
+    startTime: '2026-07-02T18:00:00Z',
+    participants: 1240,
+    status: 'Upcoming',
+    problems: [initialProblems[0], initialProblems[1]]
+  },
+  {
+    id: 'c2',
+    title: 'FAANG Apex Qualifier #2',
+    duration: '3 Hours',
+    startTime: 'Active',
+    participants: 4500,
+    status: 'Active',
+    problems: [initialProblems[1], initialProblems[2]]
+  }
+];
+
+export const initialNotes: Note[] = [
+  { id: 'n1', title: 'Dijkstra Priority Queue Notes', content: '# Dijkstra Algorithm Optimization\n\nOptimizing Dijkstra with a **Binary Heap** or **Fibonacci Heap** guarantees a time complexity of `O((E + V) log V)`.\n\n```js\n// MinHeap priority queue push\nqueue.push({ vertex, weight });\n```', updatedAt: '2026-06-29T10:00:00Z', category: 'Graphs' }
+];
+
+export const initialAuditLogs: AuditLog[] = [
+  { id: 'l1', adminEmail: 'mayank.coder52@gmail.com', action: 'Seeded problem Two Sum Matrix', timestamp: '2026-06-29T08:00:00Z', ip: '127.0.0.1' },
+  { id: 'l2', adminEmail: 'mayank.coder52@gmail.com', action: 'Configured model threshold to 98% accuracy', timestamp: '2026-06-29T09:12:00Z', ip: '127.0.0.1' }
+];
+
+export function readDB(): DatabaseState {
+  if (!fs.existsSync(DB_DIR)) {
+    fs.mkdirSync(DB_DIR, { recursive: true });
+  }
+  if (!fs.existsSync(DB_FILE)) {
+    const initialState: DatabaseState = {
+      user: initialUser,
+      problems: initialProblems,
+      achievements: initialAchievements,
+      contests: initialContests,
+      notes: initialNotes,
+      auditLogs: initialAuditLogs,
+    };
+    fs.writeFileSync(DB_FILE, JSON.stringify(initialState, null, 2));
+    return initialState;
+  }
+  try {
+    const data = fs.readFileSync(DB_FILE, 'utf-8');
+    return JSON.parse(data);
+  } catch (err) {
+    console.error('Error reading DB, resetting to defaults:', err);
+    return {
+      user: initialUser,
+      problems: initialProblems,
+      achievements: initialAchievements,
+      contests: initialContests,
+      notes: initialNotes,
+      auditLogs: initialAuditLogs,
+    };
+  }
+}
+
+export function writeDB(data: DatabaseState): void {
+  try {
+    if (!fs.existsSync(DB_DIR)) {
+      fs.mkdirSync(DB_DIR, { recursive: true });
+    }
+    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
+  } catch (err) {
+    console.error('Error writing to database file:', err);
+  }
+}
